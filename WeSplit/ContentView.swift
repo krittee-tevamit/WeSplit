@@ -14,7 +14,7 @@ struct ContentView: View {
     @State private var tipPercentage = 0
     @FocusState private var isAmountFocused: Bool
     
-    var currency: FloatingPointFormatStyle<Double>.Currency = .currency(code: Locale.current.currency?.identifier ?? "USD")
+    var currency: FloatingPointFormatStyle<Double>.Currency = .currency(code: Locale.current.currency?.identifier ?? "THB")
     
     var tipSelected: Double {
         let tipSelected = (Double(checkAmount) * Double(tipPercentage)) / 100
@@ -26,6 +26,16 @@ struct ContentView: View {
         return totalAmount
     }
     
+    var peopleSelected: Double {
+        let peopleSelected = Double(numberOfPeople) + 2
+        return peopleSelected
+    }
+    
+    var amountPerPerson: Double {
+        let amountPerPerson = totalAmount / peopleSelected
+        
+        return amountPerPerson
+    }
     
     var body: some View {
         NavigationStack {
@@ -70,28 +80,23 @@ struct ContentView: View {
                     
                     // amount per person
                     Section {
-                        Text(0, format: currency)
+                        Text(amountPerPerson, format: currency)
+                            .font(.title2).bold()
                     } header: {
                         Text("Amount per person")
                     }
-                    
-                    
-                    
-                    
-                    
-                }
-                
-                Button {
-                    //print(numberOfPeople + 2)
-                    let vCheckAmount = Double(checkAmount)
-                    let vTipPercentage = Double(tipPercentage)
-                    print( (vCheckAmount * vTipPercentage) / 100)
-                } label: {
-                    Text("print")
-                }
-                
+                }//. FORM
             }
             .navigationTitle("WeSplit")
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    
+                    Button("Done") {
+                        isAmountFocused = false
+                    }
+                }
+            }
         }
     }
 }
