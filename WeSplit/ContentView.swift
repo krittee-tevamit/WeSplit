@@ -10,62 +10,84 @@ import SwiftUI
 struct ContentView: View {
     
     @State private var checkAmount = 0.0
-    @State private var numberOfPeople = 2
-    @State private var tipPercentage = 20
+    @State private var numberOfPeople = 0
+    @State private var tipPercentage = 0
     @FocusState private var isAmountFocused: Bool
     
     var currency: FloatingPointFormatStyle<Double>.Currency = .currency(code: Locale.current.currency?.identifier ?? "USD")
     
-    var totalPerPerson: Double {
-        let peopleCount = Double(numberOfPeople + 2)
-        let tipSelection = Double(tipPercentage / 100)
-        
-        let tipValue = checkAmount * tipSelection
-        let grandToTal = checkAmount + tipValue
-        let amountPerPerson = grandToTal / peopleCount
-        
-        return amountPerPerson
+    var tipSelected: Double {
+        let tipSelected = (Double(checkAmount) * Double(tipPercentage)) / 100
+        return tipSelected
     }
+    
+    var totalAmount: Double {
+        let totalAmount = Double(checkAmount) + tipSelected
+        return totalAmount
+    }
+    
     
     var body: some View {
         NavigationStack {
-            Form {
-                // amount and number of people
-                Section {
-                    TextField("Amount", value: $checkAmount, format: currency)
-                        .keyboardType(.decimalPad)
-                        .focused($isAmountFocused)
+            VStack {
+                Form {
+                    // amount and number of people
+                    Section {
+                        TextField("Amount", value: $checkAmount, format: currency)
+                            .keyboardType(.decimalPad)
+                            .focused($isAmountFocused)
+                    }header: {
+                        Text("Bill Total")
+                    }
                     
-                    Picker("Number of people", selection: $numberOfPeople) {
-                        ForEach(2..<100) {
-                            Text("\($0) people")
+                    // tip percentage
+                    Section {
+                        Picker("Tip percentage", selection: $tipPercentage) {
+                            ForEach(0..<101, id: \.self) {
+                                Text($0, format: .percent)
+                            }
                         }
+                    } header: {
+                        Text("How much tip do you want to leave?")
                     }
-                }
-                
-                // tip percentage
-                Section {
-                    Picker("Tip percentage", selection: $tipPercentage) {
-                        ForEach(0..<101, id: \.self) {
-                            Text($0, format: .percent)
+                    
+                    // total amount
+                    Section {
+                        Text(totalAmount,format: currency)
+                    } header: {
+                        Text("Total Amount")
+                    }
+                    
+                    Section {
+                        Picker("Number of people", selection: $numberOfPeople) {
+                            ForEach(2..<100) {
+                                Text("\($0) people")
+                            }
                         }
+                    }header: {
+                        Text("Number of people")
                     }
-                } header: {
-                    Text("How much tip do you want to leave?")
+                    
+                    // amount per person
+                    Section {
+                        Text(0, format: currency)
+                    } header: {
+                        Text("Amount per person")
+                    }
+                    
+                    
+                    
+                    
+                    
                 }
                 
-                // amount per person
-                Section {
-                    Text(0, format: currency)
-                } header: {
-                    Text("Amount per person")
-                }
-                
-                // total amount
-                Section {
-                    Text(0,format: currency)
-                } header: {
-                    Text("Total Amount")
+                Button {
+                    //print(numberOfPeople + 2)
+                    let vCheckAmount = Double(checkAmount)
+                    let vTipPercentage = Double(tipPercentage)
+                    print( (vCheckAmount * vTipPercentage) / 100)
+                } label: {
+                    Text("print")
                 }
                 
             }
